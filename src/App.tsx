@@ -37,6 +37,9 @@ import AdminHomepage from "@/pages/admin/AdminHomepage";
 import AdminTestimonials from "@/pages/admin/AdminTestimonials";
 import AdminMenu from "@/pages/admin/AdminMenu";
 import AdminDonate from "@/pages/admin/AdminDonate";
+import AdminAbout from "@/pages/admin/AdminAbout";
+import AdminContact from "@/pages/admin/AdminContact";
+import AdminSiteContent from "@/pages/admin/AdminSiteContent";
 import CategoryPage from "@/pages/CategoryPage";
 import NotFound from "@/pages/NotFound";
 
@@ -78,6 +81,9 @@ const App = () => (
                   <Route index element={<AdminDashboard />} />
                   <Route path="homepage" element={<AdminHomepage />} />
                   <Route path="donate" element={<AdminDonate />} />
+                  <Route path="about" element={<AdminAbout />} />
+                  <Route path="contact" element={<AdminContact />} />
+                  <Route path="site" element={<AdminSiteContent />} />
                   <Route path="menu" element={<AdminMenu />} />
                   <Route path="testimonials" element={<AdminTestimonials />} />
                   <Route path="articles" element={<AdminArticles />} />

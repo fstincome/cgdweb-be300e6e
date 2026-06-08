@@ -7,6 +7,7 @@ import { ArrowRight, User, Search } from "lucide-react";
 import PageBanner from "@/components/PageBanner";
 import { useSEO } from "@/hooks/useSEO";
 import { tField } from "@/lib/i18nField";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 interface Article {
   id: string;
@@ -72,13 +73,14 @@ export default function BlogPage() {
 
   useSEO({ title: t("nav.blog"), description: lang === "en" ? "Discover our articles on governance, economy and sustainable development." : "Découvrez nos articles sur la gouvernance, l'économie et le développement durable." });
 
-  const blogIntro = (window as any).__cgdBlogIntro || "";
+  const { get } = useSiteSettings();
+  const blogIntro = get<{ intro: string }>("page.blog")?.intro || "";
 
   return (
     <div>
       <PageBanner title={t("nav.blog")} breadcrumbs={[{ label: t("nav.blog") }]} />
       <div className="container py-12 space-y-8">
-        <BlogIntro />
+        {blogIntro && <p className="text-muted-foreground text-center max-w-2xl mx-auto">{blogIntro}</p>}
         {/* Search */}
         <div className="relative max-w-md mx-auto">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

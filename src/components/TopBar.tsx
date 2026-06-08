@@ -11,8 +11,8 @@ const FALLBACK = {
 export default function TopBar() {
   const [time, setTime] = useState(new Date());
   const { get } = useSiteSettings();
-  const data: typeof FALLBACK = { ...FALLBACK, ...(get<typeof FALLBACK>("site.topbar") || {}) };
-  const s = data.socials || {};
+  const data = { ...FALLBACK, ...(get<typeof FALLBACK>("site.topbar") || {}) };
+  const s: Record<string, string> = (data.socials || {}) as any;
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 60000);
