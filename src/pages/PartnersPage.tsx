@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import { useSEO } from "@/hooks/useSEO";
 import { tField } from "@/lib/i18nField";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 interface Partner {
   id: string;
@@ -18,9 +19,11 @@ interface Partner {
 
 export default function PartnersPage() {
   const { t, lang } = useLanguage();
+  const { get } = useSiteSettings();
+  const intro = get<{ intro: string }>("page.partners")?.intro || t("partners.intro");
   const [partners, setPartners] = useState<Partner[]>([]);
 
-  useSEO({ title: t("nav.partners"), description: lang === "en" ? "Our partners and collaborators for sustainable development." : "Nos partenaires et collaborateurs pour le développement durable." });
+  useSEO({ title: t("nav.partners"), description: intro });
 
   useEffect(() => {
     supabase.from("partners").select("id, name, logo_url, website, description, description_en").order("display_order").then(({ data }) => { if (data) setPartners(data as Partner[]); });
@@ -31,7 +34,7 @@ export default function PartnersPage() {
       <PageBanner title={t("nav.partners")} />
       <section className="py-20">
         <div className="container">
-          <p className="text-center text-muted-foreground max-w-2xl mx-auto mb-12">{t("partners.intro")}</p>
+          {intro && <p className="text-center text-muted-foreground max-w-2xl mx-auto mb-12">{intro}</p>}
           {partners.length === 0 ? (
             <p className="text-center text-muted-foreground">{lang === "en" ? "No partner yet." : "Aucun partenaire pour le moment."}</p>
           ) : (

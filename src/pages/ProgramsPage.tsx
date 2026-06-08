@@ -6,14 +6,17 @@ import { motion } from "framer-motion";
 import PageBanner from "@/components/PageBanner";
 import { useSEO } from "@/hooks/useSEO";
 import { tField } from "@/lib/i18nField";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 interface Program { id: string; title: string; title_en: string | null; description: string | null; description_en: string | null; image_url: string | null; }
 
 export default function ProgramsPage() {
   const { t, lang } = useLanguage();
+  const { get } = useSiteSettings();
+  const intro = get<{ intro: string }>("page.programs")?.intro || "";
   const [programs, setPrograms] = useState<Program[]>([]);
 
-  useSEO({ title: t("programs.title"), description: lang === "en" ? "Discover our sustainable development and governance programs." : "Découvrez nos programmes de développement durable et de gouvernance." });
+  useSEO({ title: t("programs.title"), description: intro });
 
   useEffect(() => {
     supabase.from("programs").select("id, title, title_en, description, description_en, image_url").order("created_at", { ascending: false }).then(({ data }) => { if (data) setPrograms(data as Program[]); });
@@ -23,6 +26,7 @@ export default function ProgramsPage() {
     <div>
       <PageBanner title={t("programs.title")} breadcrumbs={[{ label: t("programs.title") }]} />
       <div className="container py-12 space-y-8">
+        {intro && <p className="text-muted-foreground text-center max-w-2xl mx-auto">{intro}</p>}
         {programs.length === 0 && <p className="text-center text-muted-foreground py-8">{lang === "en" ? "No program yet." : "Aucun programme pour le moment."}</p>}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {programs.map((p, i) => (

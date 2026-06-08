@@ -6,14 +6,17 @@ import { motion } from "framer-motion";
 import PageBanner from "@/components/PageBanner";
 import { useSEO } from "@/hooks/useSEO";
 import { tField } from "@/lib/i18nField";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 interface Project { id: string; title: string; title_en: string | null; description: string | null; description_en: string | null; image_url: string | null; status: string | null; }
 
 export default function ProjectsPage() {
   const { t, lang } = useLanguage();
+  const { get } = useSiteSettings();
+  const intro = get<{ intro: string }>("page.projects")?.intro || "";
   const [projects, setProjects] = useState<Project[]>([]);
 
-  useSEO({ title: t("nav.projects"), description: lang === "en" ? "Explore our green and community development projects." : "Explorez nos projets de développement vert et communautaire." });
+  useSEO({ title: t("nav.projects"), description: intro });
 
   useEffect(() => {
     supabase.from("projects").select("id, title, title_en, description, description_en, image_url, status").order("created_at", { ascending: false }).then(({ data }) => { if (data) setProjects(data as Project[]); });
@@ -23,6 +26,7 @@ export default function ProjectsPage() {
     <div>
       <PageBanner title={t("nav.projects")} breadcrumbs={[{ label: t("nav.projects") }]} />
       <div className="container py-12 space-y-8">
+        {intro && <p className="text-muted-foreground text-center max-w-2xl mx-auto">{intro}</p>}
         {projects.length === 0 && <p className="text-center text-muted-foreground py-8">{lang === "en" ? "No project yet." : "Aucun projet pour le moment."}</p>}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((p, i) => (
