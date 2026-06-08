@@ -1,36 +1,36 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Mail, Phone, MapPin, ArrowRight } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import logo from "@/assets/logo.jpeg";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
-interface CategoryWithCount {
-  id: string;
-  name: string;
-  count: number;
-}
+const FALLBACK = {
+  tagline: "",
+  address: "Gitega-Burundi, Nyamugari Quarter",
+  phone: "+257 68 336 228",
+  email: "info@centreforgreendevelopment.org",
+  rights: "All rights reserved.",
+};
+
+interface CategoryWithCount { id: string; name: string; count: number }
 
 export default function Footer() {
   const { t } = useLanguage();
+  const { get } = useSiteSettings();
+  const data = { ...FALLBACK, ...(get<typeof FALLBACK>("site.footer") || {}) };
   const [categories, setCategories] = useState<CategoryWithCount[]>([]);
 
   useEffect(() => {
     (async () => {
       const { data: cats } = await supabase.from("categories").select("id, name");
       if (!cats || cats.length === 0) return;
-
       const { data: articles } = await supabase.from("articles").select("category_id").eq("published", true);
       if (!articles) return;
-
       const countMap: Record<string, number> = {};
-      articles.forEach(a => {
-        if (a.category_id) countMap[a.category_id] = (countMap[a.category_id] || 0) + 1;
-      });
-
-      const withCount = cats.map(c => ({ id: c.id, name: c.name, count: countMap[c.id] || 0 }))
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 4);
+      articles.forEach(a => { if (a.category_id) countMap[a.category_id] = (countMap[a.category_id] || 0) + 1; });
+      const withCount = cats.map(c => ({ id: c.id, name: c.name, count: countMap[c.id] || 0 })).sort((a, b) => b.count - a.count).slice(0, 4);
       setCategories(withCount);
     })();
   }, []);
@@ -43,7 +43,7 @@ export default function Footer() {
             <img src={logo} alt="CGD" className="h-12 w-12 rounded-full object-cover" />
             <div>
               <p className="font-display font-bold text-lg">Centre for Green Development</p>
-              <p className="text-sm opacity-80 italic">{t("footer.tagline")}</p>
+              <p className="text-sm opacity-80 italic">{data.tagline || t("footer.tagline")}</p>
             </div>
           </div>
         </div>
@@ -75,25 +75,16 @@ export default function Footer() {
         <div className="space-y-3">
           <h4 className="font-display font-semibold text-sm uppercase tracking-wider opacity-70">{t("contact.title")}</h4>
           <div className="space-y-2 text-sm">
-            <div className="flex items-start gap-2 opacity-80">
-              <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
-              <span>Gitega-Burundi, Nyamugari Quarter</span>
-            </div>
-            <div className="flex items-center gap-2 opacity-80">
-              <Phone className="h-4 w-4 shrink-0" />
-              <span>+257 68 336 228</span>
-            </div>
-            <div className="flex items-center gap-2 opacity-80">
-              <Mail className="h-4 w-4 shrink-0" />
-              <span>info@centreforgreendevelopment.org</span>
-            </div>
+            {data.address && <div className="flex items-start gap-2 opacity-80"><MapPin className="h-4 w-4 mt-0.5 shrink-0" /><span>{data.address}</span></div>}
+            {data.phone && <div className="flex items-center gap-2 opacity-80"><Phone className="h-4 w-4 shrink-0" /><span>{data.phone}</span></div>}
+            {data.email && <div className="flex items-center gap-2 opacity-80"><Mail className="h-4 w-4 shrink-0" /><span>{data.email}</span></div>}
           </div>
         </div>
       </div>
 
       <div className="border-t border-border/20 py-4">
         <div className="container text-center text-xs opacity-60 space-y-1">
-          <p>© {new Date().getFullYear()} Centre for Green Development. {t("footer.rights")}</p>
+          <p>© {new Date().getFullYear()} Centre for Green Development. {data.rights || t("footer.rights")}</p>
           <p>Made with ❤️ by <a href="https://sightnetwork.org" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80">Sight Africa</a></p>
         </div>
       </div>

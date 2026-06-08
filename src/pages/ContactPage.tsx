@@ -1,14 +1,20 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { MapPin, Phone, Mail } from "lucide-react";
+import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { useState } from "react";
 import PageBanner from "@/components/PageBanner";
 import { useSEO } from "@/hooks/useSEO";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+
+const FALLBACK = { intro: "", address: "", phone: "", email: "", hours: "", map_embed: "" };
 
 export default function ContactPage() {
   const { t } = useLanguage();
+  const { get } = useSiteSettings();
   const [form, setForm] = useState({ name: "", email: "", message: "" });
 
-  useSEO({ title: t("contact.title"), description: "Contactez le Centre for Green Development. Adresse, téléphone et formulaire de contact." });
+  const data = { ...FALLBACK, ...(get<typeof FALLBACK>("contact.page") || {}) };
+
+  useSEO({ title: t("contact.title"), description: data.intro || "Contactez le Centre for Green Development." });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,29 +26,26 @@ export default function ContactPage() {
     <div>
       <PageBanner title={t("contact.title")} breadcrumbs={[{ label: t("contact.title") }]} />
       <div className="container py-12 space-y-10">
+        {data.intro && <p className="text-center text-muted-foreground max-w-2xl mx-auto">{data.intro}</p>}
         <div className="grid md:grid-cols-2 gap-10">
           <div className="space-y-6">
-            <div className="flex items-start gap-3">
-              <MapPin className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-              <div>
-                <p className="font-display font-semibold text-foreground text-sm">{t("contact.address")}</p>
-                <p className="text-muted-foreground text-sm">Kinyota/Muyinga, RN6, ICIZANYE HOTEL, 1st floor, MUYINGA, Burundi</p>
+            {data.address && (
+              <div className="flex items-start gap-3"><MapPin className="h-5 w-5 text-primary mt-0.5 shrink-0" /><div><p className="font-display font-semibold text-foreground text-sm">{t("contact.address")}</p><p className="text-muted-foreground text-sm">{data.address}</p></div></div>
+            )}
+            {data.phone && (
+              <div className="flex items-start gap-3"><Phone className="h-5 w-5 text-primary mt-0.5 shrink-0" /><div><p className="font-display font-semibold text-foreground text-sm">{t("contact.phone")}</p><p className="text-muted-foreground text-sm">{data.phone}</p></div></div>
+            )}
+            {data.email && (
+              <div className="flex items-start gap-3"><Mail className="h-5 w-5 text-primary mt-0.5 shrink-0" /><div><p className="font-display font-semibold text-foreground text-sm">{t("contact.email")}</p><p className="text-muted-foreground text-sm">{data.email}</p></div></div>
+            )}
+            {data.hours && (
+              <div className="flex items-start gap-3"><Clock className="h-5 w-5 text-primary mt-0.5 shrink-0" /><div><p className="font-display font-semibold text-foreground text-sm">Horaires</p><p className="text-muted-foreground text-sm">{data.hours}</p></div></div>
+            )}
+            {data.map_embed && (
+              <div className="rounded-lg overflow-hidden border border-border aspect-video">
+                <iframe src={data.map_embed} className="w-full h-full" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
               </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <Phone className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-              <div>
-                <p className="font-display font-semibold text-foreground text-sm">{t("contact.phone")}</p>
-                <p className="text-muted-foreground text-sm">+257 68 336 228</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <Mail className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-              <div>
-                <p className="font-display font-semibold text-foreground text-sm">{t("contact.email")}</p>
-                <p className="text-muted-foreground text-sm">info@centreforgreendevelopment.org</p>
-              </div>
-            </div>
+            )}
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

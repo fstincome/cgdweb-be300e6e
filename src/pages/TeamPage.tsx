@@ -6,6 +6,7 @@ import PageBanner from "@/components/PageBanner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useSEO } from "@/hooks/useSEO";
 import { tField } from "@/lib/i18nField";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const TEST_IMG = "https://lh3.googleusercontent.com/d/1_2LqoCzdX4DzAWXazdG-7Q8WntSAXQ4o";
 
@@ -13,10 +14,12 @@ interface TeamMember { id: string; name: string; role: string | null; role_en: s
 
 export default function TeamPage() {
   const { t, lang } = useLanguage();
+  const { get } = useSiteSettings();
+  const intro = get<{ intro: string }>("page.team")?.intro || "";
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [selected, setSelected] = useState<TeamMember | null>(null);
 
-  useSEO({ title: t("team.title"), description: lang === "en" ? "Meet the Centre for Green Development team." : "Rencontrez l'équipe du Centre for Green Development." });
+  useSEO({ title: t("team.title"), description: intro || (lang === "en" ? "Meet the team." : "Rencontrez l'équipe.") });
 
   useEffect(() => {
     supabase.from("team_members").select("id, name, role, role_en, bio, bio_en, image_url").order("display_order").then(({ data }) => { if (data) setMembers(data as TeamMember[]); });
@@ -26,11 +29,7 @@ export default function TeamPage() {
     <div>
       <PageBanner title={t("team.title")} breadcrumbs={[{ label: t("team.title") }]} />
       <div className="container py-12 space-y-10">
-        <p className="text-muted-foreground text-center max-w-2xl mx-auto">
-          {lang === "fr"
-            ? "Découvrez les personnes passionnées qui travaillent chaque jour pour promouvoir le développement vert et durable au sein de notre communauté."
-            : "Meet the passionate people working every day to promote green and sustainable development within our community."}
-        </p>
+        {intro && <p className="text-muted-foreground text-center max-w-2xl mx-auto">{intro}</p>}
         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {members.map((member, i) => {
             const role = tField(member, "role", lang) || (lang === "en" ? "Staff Member" : "Membre");
