@@ -168,11 +168,21 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
         <h1 className="font-display font-bold text-2xl text-foreground">Dashboard</h1>
-        <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors">
-          <LogOut className="h-4 w-4" /> Déconnexion
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleBackup}
+            disabled={backingUp}
+            className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium border border-input text-foreground hover:bg-muted transition-colors disabled:opacity-50"
+          >
+            <Download className="h-4 w-4" />
+            {backingUp ? "Sauvegarde…" : "Télécharger la base de données"}
+          </button>
+          <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors">
+            <LogOut className="h-4 w-4" /> Déconnexion
+          </button>
+        </div>
       </div>
 
       {/* Stat cards */}
