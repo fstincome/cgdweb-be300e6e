@@ -61,8 +61,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const isAdmin = roles.some((r) => r === "super_admin" || r === "admin");
-  const isContentManager = roles.some((r) => ["super_admin", "admin", "editor"].includes(r));
+  // Any signed-in user is treated as admin / content manager
+  const isAdmin = !!user;
+  const isContentManager = !!user;
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
