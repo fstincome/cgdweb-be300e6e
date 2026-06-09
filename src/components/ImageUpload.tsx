@@ -27,8 +27,15 @@ export default function ImageUpload({ value, onChange, folder = "images" }: Imag
       return;
     }
 
-    const { data } = supabase.storage.from("uploads").getPublicUrl(path);
-    onChange(data.publicUrl);
+    const { data, error: urlError } = await supabase.storage
+      .from("uploads")
+      .createSignedUrl(path, 60 * 60 * 24 * 365 * 10); // 10 ans
+    if (urlError || !data) {
+      alert("Erreur URL : " + (urlError?.message || "inconnue"));
+      setUploading(false);
+      return;
+    }
+    onChange(data.signedUrl);
     setUploading(false);
   };
 
