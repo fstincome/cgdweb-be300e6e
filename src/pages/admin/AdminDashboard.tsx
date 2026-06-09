@@ -49,6 +49,36 @@ export default function AdminDashboard() {
 
   const handleLogout = async () => { await signOut(); navigate("/login"); };
 
+  const [backingUp, setBackingUp] = useState(false);
+  const handleBackup = async () => {
+    setBackingUp(true);
+    try {
+      const tables = [
+        "articles","categories","comments","menu_items","newsletter_subscribers",
+        "page_views","pages","partners","profiles","programs","projects",
+        "site_settings","team_members","testimonials","user_roles",
+      ] as const;
+      const backup: Record<string, any> = {
+        exported_at: new Date().toISOString(),
+        version: 1,
+        tables: {},
+      };
+      for (const t of tables) {
+        const { data, error } = await supabase.from(t as any).select("*");
+        backup.tables[t] = error ? { error: error.message } : data;
+      }
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `backup_${format(new Date(), "yyyy-MM-dd_HHmm")}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setBackingUp(false);
+    }
+  };
+
   useEffect(() => {
     const fetchStats = async () => {
       const [articles, programs, projects, team] = await Promise.all([
