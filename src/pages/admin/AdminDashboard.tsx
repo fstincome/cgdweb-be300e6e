@@ -50,23 +50,48 @@ export default function AdminDashboard() {
 
   const handleLogout = async () => { await signOut(); navigate("/login"); };
 
+  const BACKUP_TABLES = [
+    "articles","categories","comments","menu_items","newsletter_subscribers",
+    "page_views","pages","partners","profiles","programs","projects",
+    "site_settings","team_members","testimonials","user_roles",
+  ] as const;
+
+  const PAGE_SIZE = 1000;
+
+  async function fetchAllRows(table: string): Promise<any[]> {
+    const all: any[] = [];
+    let from = 0;
+    // Loop until a page returns fewer rows than PAGE_SIZE
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const { data, error } = await supabase
+        .from(table as any)
+        .select("*")
+        .range(from, from + PAGE_SIZE - 1);
+      if (error) throw error;
+      const rows = (data as any[]) || [];
+      all.push(...rows);
+      if (rows.length < PAGE_SIZE) break;
+      from += PAGE_SIZE;
+    }
+    return all;
+  }
+
   const [backingUp, setBackingUp] = useState(false);
   const handleBackup = async () => {
     setBackingUp(true);
     try {
-      const tables = [
-        "articles","categories","comments","menu_items","newsletter_subscribers",
-        "page_views","pages","partners","profiles","programs","projects",
-        "site_settings","team_members","testimonials","user_roles",
-      ] as const;
       const backup: Record<string, any> = {
         exported_at: new Date().toISOString(),
         version: 1,
         tables: {},
       };
-      for (const t of tables) {
-        const { data, error } = await supabase.from(t as any).select("*");
-        backup.tables[t] = error ? { error: error.message } : data;
+      for (const t of BACKUP_TABLES) {
+        try {
+          backup.tables[t] = await fetchAllRows(t);
+        } catch (e: any) {
+          backup.tables[t] = { error: e?.message ?? String(e) };
+        }
       }
       const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
@@ -75,8 +100,64 @@ export default function AdminDashboard() {
       a.download = `backup_${format(new Date(), "yyyy-MM-dd_HHmm")}.json`;
       a.click();
       URL.revokeObjectURL(url);
+      const total = Object.values(backup.tables).reduce(
+        (s: number, v: any) => s + (Array.isArray(v) ? v.length : 0),
+        0,
+      );
+      toast.success(`Sauvegarde téléchargée (${total} lignes)`);
+    } catch (e: any) {
+      toast.error("Erreur lors de la sauvegarde", { description: e?.message });
     } finally {
       setBackingUp(false);
+    }
+  };
+
+  const [restoring, setRestoring] = useState(false);
+  const handleRestore = async (file: File) => {
+    if (!confirm(
+      "Restaurer la base depuis ce fichier ?\n\n" +
+      "Les lignes existantes (même id) seront ÉCRASÉES. " +
+      "Les lignes absentes du fichier ne seront PAS supprimées.",
+    )) return;
+
+    setRestoring(true);
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      const tables = parsed?.tables;
+      if (!tables || typeof tables !== "object") {
+        throw new Error("Fichier invalide : champ 'tables' manquant");
+      }
+
+      let okCount = 0;
+      const errors: string[] = [];
+
+      for (const t of BACKUP_TABLES) {
+        const rows = tables[t];
+        if (!Array.isArray(rows) || rows.length === 0) continue;
+        // Upsert in chunks
+        for (let i = 0; i < rows.length; i += 500) {
+          const chunk = rows.slice(i, i + 500);
+          const { error } = await supabase.from(t as any).upsert(chunk, { onConflict: "id" });
+          if (error) {
+            errors.push(`${t}: ${error.message}`);
+            break;
+          }
+          okCount += chunk.length;
+        }
+      }
+
+      if (errors.length) {
+        toast.error(`Restauration partielle (${okCount} lignes)`, {
+          description: errors.slice(0, 3).join(" • "),
+        });
+      } else {
+        toast.success(`Restauration réussie (${okCount} lignes)`);
+      }
+    } catch (e: any) {
+      toast.error("Erreur lors de la restauration", { description: e?.message });
+    } finally {
+      setRestoring(false);
     }
   };
 
