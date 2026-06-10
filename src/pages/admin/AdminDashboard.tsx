@@ -261,6 +261,22 @@ export default function AdminDashboard() {
             <Download className="h-4 w-4" />
             {backingUp ? "Sauvegarde…" : "Télécharger la base de données"}
           </button>
+          <label
+            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium border border-input text-foreground hover:bg-muted transition-colors cursor-pointer ${restoring ? "opacity-50 pointer-events-none" : ""}`}
+          >
+            <Upload className="h-4 w-4" />
+            {restoring ? "Restauration…" : "Restaurer un backup"}
+            <input
+              type="file"
+              accept="application/json,.json"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                e.target.value = "";
+                if (f) handleRestore(f);
+              }}
+            />
+          </label>
           <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors">
             <LogOut className="h-4 w-4" /> Déconnexion
           </button>
