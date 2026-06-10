@@ -2,7 +2,8 @@ import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { FileText, Users, BookOpen, Layers, Eye, TrendingUp, Globe, LogOut, Mail, Trash2, Download } from "lucide-react";
+import { FileText, Users, BookOpen, Layers, Eye, TrendingUp, Globe, LogOut, Mail, Trash2, Download, Upload } from "lucide-react";
+import { toast } from "sonner";
 import {
   ChartContainer,
   ChartTooltip,
