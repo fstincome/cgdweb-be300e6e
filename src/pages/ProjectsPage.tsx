@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import PageBanner from "@/components/PageBanner";
-import { useSEO } from "@/hooks/useSEO";
+import { usePageSEO } from "@/hooks/usePageSEO";
 import { tField } from "@/lib/i18nField";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
@@ -16,7 +16,7 @@ export default function ProjectsPage() {
   const intro = get<{ intro: string }>("page.projects")?.intro || "";
   const [projects, setProjects] = useState<Project[]>([]);
 
-  useSEO({ title: t("nav.projects"), description: intro });
+  usePageSEO("projects", { title: t("nav.projects"), description: intro });
 
   useEffect(() => {
     supabase.from("projects").select("id, title, title_en, description, description_en, image_url, status").order("created_at", { ascending: false }).then(({ data }) => { if (data) setProjects(data as Project[]); });

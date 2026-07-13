@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import PageBanner from "@/components/PageBanner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { useSEO } from "@/hooks/useSEO";
+import { usePageSEO } from "@/hooks/usePageSEO";
 import { tField } from "@/lib/i18nField";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
@@ -19,7 +19,7 @@ export default function TeamPage() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [selected, setSelected] = useState<TeamMember | null>(null);
 
-  useSEO({ title: t("team.title"), description: intro || (lang === "en" ? "Meet the team." : "Rencontrez l'équipe.") });
+  usePageSEO("team", { title: t("team.title"), description: intro || (lang === "en" ? "Meet the team." : "Rencontrez l'équipe.") });
 
   useEffect(() => {
     supabase.from("team_members").select("id, name, role, role_en, bio, bio_en, image_url").order("display_order").then(({ data }) => { if (data) setMembers(data as TeamMember[]); });

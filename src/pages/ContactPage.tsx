@@ -2,7 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { useState } from "react";
 import PageBanner from "@/components/PageBanner";
-import { useSEO } from "@/hooks/useSEO";
+import { usePageSEO } from "@/hooks/usePageSEO";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const FALLBACK = { intro: "", address: "", phone: "", email: "", hours: "", map_embed: "" };
@@ -14,7 +14,7 @@ export default function ContactPage() {
 
   const data = { ...FALLBACK, ...(get<typeof FALLBACK>("contact.page") || {}) };
 
-  useSEO({ title: t("contact.title"), description: data.intro || "Contactez le Centre for Green Development." });
+  usePageSEO("contact", { title: t("contact.title"), description: data.intro || "Contactez le Centre for Green Development." });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

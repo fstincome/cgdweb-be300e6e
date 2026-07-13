@@ -2,7 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Target, Eye, BookOpen, Compass, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 import PageBanner from "@/components/PageBanner";
-import { useSEO } from "@/hooks/useSEO";
+import { usePageSEO } from "@/hooks/usePageSEO";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const FALLBACK = {
@@ -18,7 +18,7 @@ export default function AboutPage() {
   const { get } = useSiteSettings();
   const data: typeof FALLBACK = { ...FALLBACK, ...(get<typeof FALLBACK>("about.page") || {}) };
 
-  useSEO({ title: t("about.title"), description: data.mission?.text?.slice(0, 160) || "Centre for Green Development." });
+  usePageSEO("about", { title: t("about.title"), description: data.mission?.text?.slice(0, 160) || "Centre for Green Development." });
 
   const blocks = [
     { icon: Target, ...data.mission },

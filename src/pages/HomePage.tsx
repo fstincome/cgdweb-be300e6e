@@ -5,7 +5,7 @@ import * as Icons from "lucide-react";
 import { ArrowRight, User, ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useSEO } from "@/hooks/useSEO";
+import { usePageSEO } from "@/hooks/usePageSEO";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { tField } from "@/lib/i18nField";
 import TestimonialsCarousel from "@/components/TestimonialsCarousel";
@@ -124,7 +124,7 @@ export default function HomePage() {
     return () => clearInterval(timer);
   }, [articles]);
 
-  useSEO({
+  usePageSEO("home", {
     title: lang === "en" ? "Home" : "Accueil",
     description: lang === "en"
       ? "Green Think Hub - Promoting transparency, economic literacy and sustainable development in Burundi."

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import PageBanner from "@/components/PageBanner";
-import { useSEO } from "@/hooks/useSEO";
+import { usePageSEO } from "@/hooks/usePageSEO";
 import { tField } from "@/lib/i18nField";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
@@ -16,7 +16,7 @@ export default function ProgramsPage() {
   const intro = get<{ intro: string }>("page.programs")?.intro || "";
   const [programs, setPrograms] = useState<Program[]>([]);
 
-  useSEO({ title: t("programs.title"), description: intro });
+  usePageSEO("programs", { title: t("programs.title"), description: intro });
 
   useEffect(() => {
     supabase.from("programs").select("id, title, title_en, description, description_en, image_url").order("created_at", { ascending: false }).then(({ data }) => { if (data) setPrograms(data as Program[]); });
