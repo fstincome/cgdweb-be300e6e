@@ -4,7 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import PageBanner from "@/components/PageBanner";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
-import { useSEO } from "@/hooks/useSEO";
+import { usePageSEO } from "@/hooks/usePageSEO";
 import { tField } from "@/lib/i18nField";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
@@ -23,7 +23,7 @@ export default function PartnersPage() {
   const intro = get<{ intro: string }>("page.partners")?.intro || t("partners.intro");
   const [partners, setPartners] = useState<Partner[]>([]);
 
-  useSEO({ title: t("nav.partners"), description: intro });
+  usePageSEO("partners", { title: t("nav.partners"), description: intro });
 
   useEffect(() => {
     supabase.from("partners").select("id, name, logo_url, website, description, description_en").order("display_order").then(({ data }) => { if (data) setPartners(data as Partner[]); });

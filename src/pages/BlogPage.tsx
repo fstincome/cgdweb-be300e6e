@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { ArrowRight, User, Search } from "lucide-react";
 import PageBanner from "@/components/PageBanner";
-import { useSEO } from "@/hooks/useSEO";
+import { usePageSEO } from "@/hooks/usePageSEO";
 import { tField } from "@/lib/i18nField";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
@@ -71,7 +71,7 @@ export default function BlogPage() {
 
   useEffect(() => { setPage(1); }, [search]);
 
-  useSEO({ title: t("nav.blog"), description: lang === "en" ? "Discover our articles on governance, economy and sustainable development." : "Découvrez nos articles sur la gouvernance, l'économie et le développement durable." });
+  usePageSEO("blog", { title: t("nav.blog"), description: lang === "en" ? "Discover our articles on governance, economy and sustainable development." : "Découvrez nos articles sur la gouvernance, l'économie et le développement durable." });
 
   const { get } = useSiteSettings();
   const blogIntro = get<{ intro: string }>("page.blog")?.intro || "";

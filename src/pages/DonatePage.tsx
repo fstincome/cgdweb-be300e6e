@@ -2,7 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import PageBanner from "@/components/PageBanner";
 import { Heart, Building2, CreditCard, Globe, Copy, Check, Smartphone, DollarSign } from "lucide-react";
 import { useState } from "react";
-import { useSEO } from "@/hooks/useSEO";
+import { usePageSEO } from "@/hooks/usePageSEO";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const ICONS: Record<string, any> = { CreditCard, Globe, Building2, Heart, Smartphone, DollarSign };
@@ -23,7 +23,7 @@ export default function DonatePage() {
   const { get } = useSiteSettings();
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  useSEO({ title: t("donate.title"), description: "Soutenez nos actions pour le développement durable au Burundi. Faites un don." });
+  usePageSEO("donate", { title: t("donate.title"), description: "Soutenez nos actions pour le développement durable au Burundi. Faites un don." });
 
   const data: typeof FALLBACK = { ...FALLBACK, ...(get<typeof FALLBACK>("donate.page") || {}) };
 
