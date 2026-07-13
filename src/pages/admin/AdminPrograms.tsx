@@ -52,10 +52,17 @@ export default function AdminPrograms() {
       )}
       <div className="bg-card border border-border rounded-lg overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-muted"><tr><th className="text-left px-4 py-3 font-medium text-muted-foreground">Titre</th><th className="text-left px-4 py-3 font-medium text-muted-foreground">Description</th><th className="text-right px-4 py-3 font-medium text-muted-foreground">Actions</th></tr></thead>
+          <thead className="bg-muted"><tr><th className="text-left px-4 py-3 font-medium text-muted-foreground w-20">Image</th><th className="text-left px-4 py-3 font-medium text-muted-foreground">Titre</th><th className="text-left px-4 py-3 font-medium text-muted-foreground">Description</th><th className="text-right px-4 py-3 font-medium text-muted-foreground">Actions</th></tr></thead>
           <tbody>
             {items.map((p) => (
               <tr key={p.id} className="border-t border-border">
+                <td className="px-4 py-3">
+                  {p.image_url ? (
+                    <img src={p.image_url} alt={p.title} className="h-14 w-20 object-cover rounded border border-border" />
+                  ) : (
+                    <div className="h-14 w-20 rounded border border-dashed border-border bg-muted flex items-center justify-center text-[10px] text-muted-foreground">—</div>
+                  )}
+                </td>
                 <td className="px-4 py-3 text-card-foreground font-medium">{p.title}</td>
                 <td className="px-4 py-3 text-muted-foreground truncate max-w-xs">{p.description || "—"}</td>
                 <td className="px-4 py-3 text-right space-x-1">
@@ -64,7 +71,7 @@ export default function AdminPrograms() {
                 </td>
               </tr>
             ))}
-            {items.length === 0 && <tr><td colSpan={3} className="px-4 py-8 text-center text-muted-foreground">Aucun programme.</td></tr>}
+            {items.length === 0 && <tr><td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">Aucun programme.</td></tr>}
           </tbody>
         </table>
       </div>
