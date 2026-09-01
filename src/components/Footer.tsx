@@ -8,7 +8,7 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const FALLBACK = {
   tagline: "",
-  address: "Gitega-Burundi, Nyamugari Quarter",
+  address: "Gitega-Burundi, Q.Musinzira en face de la Mausolée Pierre Nkurunziza",
   phone: "+257 68 336 228",
   email: "info@centreforgreendevelopment.org",
   rights: "All rights reserved.",
