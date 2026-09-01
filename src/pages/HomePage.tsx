@@ -87,7 +87,7 @@ export default function HomePage() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   useEffect(() => {
-    supabase.from("articles").select("id, title, title_en, slug, image_url, created_at, author_id, category:categories(name, name_en)").eq("published", true).order("created_at", { ascending: false }).limit(12).then(async ({ data }) => {
+    supabase.from("articles").select("id, title, title_en, slug, image_url, created_at, author_id, category:categories(name, name_en)").eq("published", true).order("created_at", { ascending: false }).limit(3).then(async ({ data }) => {
       if (data) {
         setArticles(data as unknown as Article[]);
         const authorIds = [...new Set(data.map((a: any) => a.author_id).filter(Boolean))];
