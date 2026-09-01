@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import * as Icons from "lucide-react";
-import { ArrowRight, User, ChevronLeft, ChevronRight, Heart } from "lucide-react";
+import { ArrowRight, User, Heart } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { usePageSEO } from "@/hooks/usePageSEO";
@@ -79,7 +79,6 @@ export default function HomePage() {
   const [partners, setPartners] = useState<Partner[]>([]);
 
   const [currentSlide, setCurrentSlide] = useState(0);
-  const articlesRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
@@ -87,7 +86,7 @@ export default function HomePage() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   useEffect(() => {
-    supabase.from("articles").select("id, title, title_en, slug, image_url, created_at, author_id, category:categories(name, name_en)").eq("published", true).order("created_at", { ascending: false }).limit(12).then(async ({ data }) => {
+    supabase.from("articles").select("id, title, title_en, slug, image_url, created_at, author_id, category:categories(name, name_en)").eq("published", true).order("created_at", { ascending: false }).limit(3).then(async ({ data }) => {
       if (data) {
         setArticles(data as unknown as Article[]);
         const authorIds = [...new Set(data.map((a: any) => a.author_id).filter(Boolean))];
@@ -113,16 +112,6 @@ export default function HomePage() {
     return () => clearInterval(timer);
   }, [hero?.slides?.length]);
 
-  useEffect(() => {
-    const el = articlesRef.current;
-    if (!el || articles.length === 0) return;
-    const timer = setInterval(() => {
-      const maxScroll = el.scrollWidth - el.clientWidth;
-      if (el.scrollLeft >= maxScroll - 10) el.scrollTo({ left: 0, behavior: "smooth" });
-      else el.scrollBy({ left: 340, behavior: "smooth" });
-    }, 3000);
-    return () => clearInterval(timer);
-  }, [articles]);
 
   usePageSEO("home", {
     title: lang === "en" ? "Home" : "Accueil",
@@ -332,7 +321,7 @@ export default function HomePage() {
         </motion.section>
       )}
 
-      {/* ── Articles ── */}
+      {/* ── Latest Articles ── */}
       {articles.length > 0 && (
         <motion.section className="py-24" initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-80px" }} variants={sectionVariants}>
           <div className="container space-y-12">
@@ -341,44 +330,42 @@ export default function HomePage() {
                 <span className="text-primary text-sm font-semibold tracking-wider uppercase">{t("home.section.articles.kicker")}</span>
                 <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground">{t("home.section.articles")}</h2>
               </div>
-              <div className="flex items-center gap-2">
-                <button onClick={() => articlesRef.current?.scrollBy({ left: -340, behavior: "smooth" })} className="p-2 rounded-full border border-border hover:bg-muted transition-colors"><ChevronLeft className="h-4 w-4" /></button>
-                <button onClick={() => articlesRef.current?.scrollBy({ left: 340, behavior: "smooth" })} className="p-2 rounded-full border border-border hover:bg-muted transition-colors"><ChevronRight className="h-4 w-4" /></button>
-                <Link to="/blog" className="text-primary text-sm font-medium hover:underline inline-flex items-center gap-1 ml-3">{t("home.section.viewall")} <ArrowRight className="h-3.5 w-3.5" /></Link>
-              </div>
+              <Link to="/blog" className="text-primary text-sm font-medium hover:underline inline-flex items-center gap-1">{t("home.section.viewall")} <ArrowRight className="h-3.5 w-3.5" /></Link>
             </div>
-            <div ref={articlesRef} className="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-4" style={{ scrollbarWidth: "none" }}>
-              {articles.map((a, idx) => {
+            <motion.div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3" variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+              {articles.map((a) => {
                 const author = a.author_id ? authors[a.author_id] : null;
                 const catName = a.category ? tField(a.category, "name", lang) : "";
                 return (
-                  <motion.div key={a.id} initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.05, duration: 0.5 }} className="min-w-[300px] max-w-[320px] shrink-0 snap-start border border-border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 group">
-                    <div className="aspect-video bg-muted overflow-hidden">
-                      <img src={a.image_url || TEST_IMG} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    </div>
-                    <div className="p-5 space-y-3">
-                      {catName && <span className="text-xs font-semibold text-primary uppercase tracking-wider">{catName}</span>}
-                      <h3 className="font-display font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">{tField(a, "title", lang)}</h3>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        {author && (
-                          <>
-                            <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden shrink-0">
-                              {author.avatar_url ? <img src={author.avatar_url} alt="" className="h-full w-full object-cover" /> : <User className="h-3 w-3 text-primary" />}
-                            </div>
-                            <span>{author.display_name || "—"}</span>
-                            <span>·</span>
-                          </>
-                        )}
-                        <span>{new Date(a.created_at).toLocaleDateString(dateLocale)}</span>
+                  <motion.div key={a.id} variants={staggerItem} whileHover={{ y: -6 }}>
+                    <Link to={`/blog/${a.slug || a.id}`} className="block border border-border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 group h-full">
+                      <div className="aspect-video bg-muted overflow-hidden">
+                        <img src={a.image_url || TEST_IMG} alt={tField(a, "title", lang)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       </div>
-                      <Link to={`/blog/${a.slug || a.id}`} className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
-                        {t("general.readmore")} <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
-                      </Link>
-                    </div>
+                      <div className="p-5 space-y-3">
+                        {catName && <span className="text-xs font-semibold text-primary uppercase tracking-wider">{catName}</span>}
+                        <h3 className="font-display font-semibold text-lg text-foreground line-clamp-2 group-hover:text-primary transition-colors">{tField(a, "title", lang)}</h3>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          {author && (
+                            <>
+                              <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden shrink-0">
+                                {author.avatar_url ? <img src={author.avatar_url} alt="" className="h-full w-full object-cover" /> : <User className="h-3 w-3 text-primary" />}
+                              </div>
+                              <span>{author.display_name || "—"}</span>
+                              <span>·</span>
+                            </>
+                          )}
+                          <span>{new Date(a.created_at).toLocaleDateString(dateLocale)}</span>
+                        </div>
+                        <span className="inline-flex items-center gap-1.5 text-sm font-medium text-primary">
+                          {t("general.readmore")} <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform" />
+                        </span>
+                      </div>
+                    </Link>
                   </motion.div>
                 );
               })}
-            </div>
+            </motion.div>
           </div>
         </motion.section>
       )}
