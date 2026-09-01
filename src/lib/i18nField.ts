@@ -12,7 +12,9 @@ export function tField<T extends Record<string, any>>(
     const en = row[`${base}_en`];
     if (en && String(en).trim() !== "") return en;
   }
-  return row[base] ?? "";
+  const direct = row[base];
+  if (direct != null && String(direct).trim() !== "") return direct;
+  return row[`${base}_fr`] ?? "";
 }
 
 // Pick from an object {fr,en} block (e.g. from site_settings)
