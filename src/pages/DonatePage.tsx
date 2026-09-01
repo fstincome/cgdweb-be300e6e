@@ -1,11 +1,11 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import PageBanner from "@/components/PageBanner";
-import { Heart, Building2, CreditCard, Globe, Copy, Check, Smartphone, DollarSign } from "lucide-react";
+import { Heart, Building2, CreditCard, Globe, Copy, Check, Smartphone, DollarSign, Bitcoin } from "lucide-react";
 import { useState } from "react";
 import { usePageSEO } from "@/hooks/usePageSEO";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
-const ICONS: Record<string, any> = { CreditCard, Globe, Building2, Heart, Smartphone, DollarSign };
+const ICONS: Record<string, any> = { CreditCard, Globe, Building2, Heart, Smartphone, DollarSign, Bitcoin };
 
 const FALLBACK = {
   intro_title: "",
