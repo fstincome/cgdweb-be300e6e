@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import * as Icons from "lucide-react";
-import { ArrowRight, User, ChevronLeft, ChevronRight, Heart } from "lucide-react";
+import { ArrowRight, User, Heart } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { usePageSEO } from "@/hooks/usePageSEO";
@@ -79,7 +79,6 @@ export default function HomePage() {
   const [partners, setPartners] = useState<Partner[]>([]);
 
   const [currentSlide, setCurrentSlide] = useState(0);
-  const articlesRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
@@ -113,16 +112,6 @@ export default function HomePage() {
     return () => clearInterval(timer);
   }, [hero?.slides?.length]);
 
-  useEffect(() => {
-    const el = articlesRef.current;
-    if (!el || articles.length === 0) return;
-    const timer = setInterval(() => {
-      const maxScroll = el.scrollWidth - el.clientWidth;
-      if (el.scrollLeft >= maxScroll - 10) el.scrollTo({ left: 0, behavior: "smooth" });
-      else el.scrollBy({ left: 340, behavior: "smooth" });
-    }, 3000);
-    return () => clearInterval(timer);
-  }, [articles]);
 
   usePageSEO("home", {
     title: lang === "en" ? "Home" : "Accueil",
