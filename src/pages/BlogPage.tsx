@@ -8,6 +8,7 @@ import PageBanner from "@/components/PageBanner";
 import { usePageSEO } from "@/hooks/usePageSEO";
 import { tField } from "@/lib/i18nField";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { usePageBanner } from "@/hooks/usePageBanner";
 
 interface Article {
   id: string;
@@ -28,6 +29,7 @@ interface AuthorMap {
 const ITEMS_PER_PAGE = 9;
 
 export default function BlogPage() {
+  const banner = usePageBanner("blog");
   const { t, lang } = useLanguage();
   const [articles, setArticles] = useState<Article[]>([]);
   const [authors, setAuthors] = useState<AuthorMap>({});
@@ -78,7 +80,7 @@ export default function BlogPage() {
 
   return (
     <div>
-      <PageBanner title={t("nav.blog")} breadcrumbs={[{ label: t("nav.blog") }]} />
+      <PageBanner title={t("nav.blog")} imageUrl={banner.image} breadcrumbs={[{ label: banner.label || t("nav.blog") }]} />
       <div className="container py-12 space-y-8">
         {blogIntro && <p className="text-muted-foreground text-center max-w-2xl mx-auto">{blogIntro}</p>}
         {/* Search */}

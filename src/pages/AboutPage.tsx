@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import PageBanner from "@/components/PageBanner";
 import { usePageSEO } from "@/hooks/usePageSEO";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { usePageBanner } from "@/hooks/usePageBanner";
 
 const FALLBACK = {
   mission: { title: "Notre mission", text: "" },
@@ -14,6 +15,7 @@ const FALLBACK = {
 };
 
 export default function AboutPage() {
+  const banner = usePageBanner("about");
   const { t } = useLanguage();
   const { get } = useSiteSettings();
   const data: typeof FALLBACK = { ...FALLBACK, ...(get<typeof FALLBACK>("about.page") || {}) };
@@ -27,7 +29,7 @@ export default function AboutPage() {
 
   return (
     <div>
-      <PageBanner title={t("about.title")} breadcrumbs={[{ label: t("about.title") }]} />
+      <PageBanner title={t("about.title")} imageUrl={banner.image} breadcrumbs={[{ label: banner.label || t("about.title") }]} />
       <div className="container py-12 space-y-16">
         <div className="grid md:grid-cols-2 gap-8">
           {blocks.map((item, i) => (

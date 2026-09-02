@@ -4,10 +4,12 @@ import { useState } from "react";
 import PageBanner from "@/components/PageBanner";
 import { usePageSEO } from "@/hooks/usePageSEO";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { usePageBanner } from "@/hooks/usePageBanner";
 
 const FALLBACK = { intro: "", address: "", phone: "", email: "", hours: "", map_embed: "" };
 
 export default function ContactPage() {
+  const banner = usePageBanner("contact");
   const { t } = useLanguage();
   const { get } = useSiteSettings();
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -24,7 +26,7 @@ export default function ContactPage() {
 
   return (
     <div>
-      <PageBanner title={t("contact.title")} breadcrumbs={[{ label: t("contact.title") }]} />
+      <PageBanner title={t("contact.title")} imageUrl={banner.image} breadcrumbs={[{ label: banner.label || t("contact.title") }]} />
       <div className="container py-12 space-y-10">
         {data.intro && <p className="text-center text-muted-foreground max-w-2xl mx-auto">{data.intro}</p>}
         <div className="grid md:grid-cols-2 gap-10">

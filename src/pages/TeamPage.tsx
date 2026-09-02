@@ -7,12 +7,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { usePageSEO } from "@/hooks/usePageSEO";
 import { tField } from "@/lib/i18nField";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { usePageBanner } from "@/hooks/usePageBanner";
 
 const TEST_IMG = "https://lh3.googleusercontent.com/d/1_2LqoCzdX4DzAWXazdG-7Q8WntSAXQ4o";
 
 interface TeamMember { id: string; name: string; role: string | null; role_en: string | null; bio: string | null; bio_en: string | null; image_url: string | null; }
 
 export default function TeamPage() {
+  const banner = usePageBanner("team");
   const { t, lang } = useLanguage();
   const { get } = useSiteSettings();
   const intro = get<{ intro: string }>("page.team")?.intro || "";
@@ -27,7 +29,7 @@ export default function TeamPage() {
 
   return (
     <div>
-      <PageBanner title={t("team.title")} breadcrumbs={[{ label: t("team.title") }]} />
+      <PageBanner title={t("team.title")} imageUrl={banner.image} breadcrumbs={[{ label: banner.label || t("team.title") }]} />
       <div className="container py-12 space-y-10">
         {intro && <p className="text-muted-foreground text-center max-w-2xl mx-auto">{intro}</p>}
         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

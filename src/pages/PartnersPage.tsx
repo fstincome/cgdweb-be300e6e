@@ -7,6 +7,7 @@ import { ExternalLink } from "lucide-react";
 import { usePageSEO } from "@/hooks/usePageSEO";
 import { tField } from "@/lib/i18nField";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { usePageBanner } from "@/hooks/usePageBanner";
 
 interface Partner {
   id: string;
@@ -18,6 +19,7 @@ interface Partner {
 }
 
 export default function PartnersPage() {
+  const banner = usePageBanner("partners");
   const { t, lang } = useLanguage();
   const { get } = useSiteSettings();
   const intro = get<{ intro: string }>("page.partners")?.intro || t("partners.intro");
@@ -31,7 +33,7 @@ export default function PartnersPage() {
 
   return (
     <div>
-      <PageBanner title={t("nav.partners")} />
+      <PageBanner title={t("nav.partners")} imageUrl={banner.image} breadcrumbs={[{ label: banner.label || t("nav.partners") }]} />
       <section className="py-20">
         <div className="container">
           {intro && <p className="text-center text-muted-foreground max-w-2xl mx-auto mb-12">{intro}</p>}
