@@ -78,10 +78,19 @@ export default function AdminSiteContent() {
                 {saving === key ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Enregistrer
               </button>
             </div>
-            <LangTabs
-              fr={<KindEditor kind={kind} value={row.value_fr || {}} onChange={(v) => setValue(key, "fr", v)} />}
-              en={<KindEditor kind={kind} value={row.value_en || {}} onChange={(v) => setValue(key, "en", v)} />}
-            />
+            {kind === "banners" ? (
+              <BannersEditor
+                fr={row.value_fr || {}}
+                en={row.value_en || {}}
+                onChange={(fr, en) => { setValue(key, "fr", fr); setValue(key, "en", en); }}
+              />
+            ) : (
+              <LangTabs
+                fr={<KindEditor kind={kind} value={row.value_fr || {}} onChange={(v) => setValue(key, "fr", v)} />}
+                en={<KindEditor kind={kind} value={row.value_en || {}} onChange={(v) => setValue(key, "en", v)} />}
+              />
+            )}
+
           </section>
         );
       })}
