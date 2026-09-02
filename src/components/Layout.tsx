@@ -6,6 +6,7 @@ import ScrollProgress from "./ScrollProgress";
 import ScrollToTop from "./ScrollToTop";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import NewsletterModal from "./NewsletterModal";
+import InstallPrompt from "./InstallPrompt";
 
 export default function Layout() {
   usePageTracking();
@@ -21,6 +22,7 @@ export default function Layout() {
       <Footer />
       <ScrollToTop />
       <NewsletterModal />
+      <InstallPrompt />
     </div>
   );
 }
