@@ -7,10 +7,12 @@ import PageBanner from "@/components/PageBanner";
 import { usePageSEO } from "@/hooks/usePageSEO";
 import { tField } from "@/lib/i18nField";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { usePageBanner } from "@/hooks/usePageBanner";
 
 interface Project { id: string; title: string; title_en: string | null; description: string | null; description_en: string | null; image_url: string | null; status: string | null; }
 
 export default function ProjectsPage() {
+  const banner = usePageBanner("projects");
   const { t, lang } = useLanguage();
   const { get } = useSiteSettings();
   const intro = get<{ intro: string }>("page.projects")?.intro || "";
@@ -24,7 +26,7 @@ export default function ProjectsPage() {
 
   return (
     <div>
-      <PageBanner title={t("nav.projects")} breadcrumbs={[{ label: t("nav.projects") }]} />
+      <PageBanner title={t("nav.projects")} imageUrl={banner.image} breadcrumbs={[{ label: banner.label || t("nav.projects") }]} />
       <div className="container py-12 space-y-8">
         {intro && <p className="text-muted-foreground text-center max-w-2xl mx-auto">{intro}</p>}
         {projects.length === 0 && <p className="text-center text-muted-foreground py-8">{lang === "en" ? "No project yet." : "Aucun projet pour le moment."}</p>}

@@ -4,6 +4,7 @@ import { Heart, Building2, CreditCard, Globe, Copy, Check, Smartphone, DollarSig
 import { useState } from "react";
 import { usePageSEO } from "@/hooks/usePageSEO";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { usePageBanner } from "@/hooks/usePageBanner";
 
 const ICONS: Record<string, any> = { CreditCard, Globe, Building2, Heart, Smartphone, DollarSign, Bitcoin };
 
@@ -19,6 +20,7 @@ const FALLBACK = {
 };
 
 export default function DonatePage() {
+  const banner = usePageBanner("donate");
   const { t } = useLanguage();
   const { get } = useSiteSettings();
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -35,7 +37,7 @@ export default function DonatePage() {
 
   return (
     <div>
-      <PageBanner title={t("donate.title")} breadcrumbs={[{ label: t("nav.home"), to: "/" }, { label: t("donate.title") }]} />
+      <PageBanner title={t("donate.title")} imageUrl={banner.image} breadcrumbs={[{ label: t("nav.home"), to: "/" }, { label: banner.label || t("donate.title") }]} />
 
       <section className="py-16">
         <div className="container max-w-5xl space-y-12">
