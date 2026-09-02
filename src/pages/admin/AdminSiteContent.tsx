@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import LangTabs from "@/components/admin/LangTabs";
+import ImageUpload from "@/components/ImageUpload";
 import { Loader2, Save } from "lucide-react";
 import { reloadSiteSettings } from "@/hooks/useSiteSettings";
 
@@ -107,7 +108,7 @@ function Labeled({ label, children }: { label: string; children: React.ReactNode
   );
 }
 
-function KindEditor({ kind, value, onChange }: { kind: "intro" | "footer" | "topbar"; value: any; onChange: (v: any) => void }) {
+function KindEditor({ kind, value, onChange }: { kind: "intro" | "footer" | "topbar" | "banners"; value: any; onChange: (v: any) => void }) {
   const set = (patch: any) => onChange({ ...value, ...patch });
   const setSocial = (k: string, v: string) => onChange({ ...value, socials: { ...(value.socials || {}), [k]: v } });
 
@@ -138,6 +139,52 @@ function KindEditor({ kind, value, onChange }: { kind: "intro" | "footer" | "top
         <Labeled label="YouTube"><input className={inputCls} value={s.youtube || ""} onChange={(e) => setSocial("youtube", e.target.value)} placeholder="https://youtube.com/..." /></Labeled>
       </div>
       <p className="text-xs text-muted-foreground">Laissez vide pour masquer l'icône d'un réseau social.</p>
+    </div>
+  );
+}
+
+function BannersEditor({
+  fr,
+  en,
+  onChange,
+}: {
+  fr: Record<string, any>;
+  en: Record<string, any>;
+  onChange: (fr: Record<string, any>, en: Record<string, any>) => void;
+}) {
+  const update = (slug: string, patch: { labelFr?: string; labelEn?: string; image?: string }) => {
+    const nextFr = { ...fr, [slug]: { ...(fr[slug] || {}) } };
+    const nextEn = { ...en, [slug]: { ...(en[slug] || {}) } };
+    if (patch.labelFr !== undefined) nextFr[slug].label = patch.labelFr;
+    if (patch.labelEn !== undefined) nextEn[slug].label = patch.labelEn;
+    if (patch.image !== undefined) {
+      nextFr[slug].image = patch.image;
+      nextEn[slug].image = patch.image;
+    }
+    onChange(nextFr, nextEn);
+  };
+
+  return (
+    <div className="space-y-6">
+      <p className="text-xs text-muted-foreground">
+        Pour chaque page : l'image de fond de la bannière et le libellé affiché dans le fil d'Ariane. Laissez l'image vide pour utiliser l'image par défaut.
+      </p>
+      {BANNER_PAGES.map(({ slug, label }) => (
+        <div key={slug} className="border border-border rounded-md p-4 space-y-3">
+          <h3 className="font-display font-semibold text-sm text-card-foreground">{label}</h3>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <Labeled label="Libellé fil d'Ariane (FR)">
+              <input className={inputCls} value={fr[slug]?.label || ""} onChange={(e) => update(slug, { labelFr: e.target.value })} />
+            </Labeled>
+            <Labeled label="Breadcrumb label (EN)">
+              <input className={inputCls} value={en[slug]?.label || ""} onChange={(e) => update(slug, { labelEn: e.target.value })} />
+            </Labeled>
+          </div>
+          <Labeled label="Image de bannière">
+            <ImageUpload value={fr[slug]?.image || ""} onChange={(url) => update(slug, { image: url })} folder="banners" />
+          </Labeled>
+        </div>
+      ))}
     </div>
   );
 }
