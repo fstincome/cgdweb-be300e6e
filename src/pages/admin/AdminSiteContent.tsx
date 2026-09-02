@@ -8,15 +8,28 @@ import { reloadSiteSettings } from "@/hooks/useSiteSettings";
 const inputCls =
   "w-full px-3 py-2 rounded-md border border-input bg-background text-foreground text-sm focus:ring-2 focus:ring-ring focus:outline-none";
 
-const SECTIONS: { key: string; label: string; kind: "intro" | "footer" | "topbar" }[] = [
+const SECTIONS: { key: string; label: string; kind: "intro" | "footer" | "topbar" | "banners" }[] = [
   { key: "page.team", label: "Intro — Équipe", kind: "intro" },
   { key: "page.partners", label: "Intro — Partenaires", kind: "intro" },
   { key: "page.programs", label: "Intro — Programmes", kind: "intro" },
   { key: "page.projects", label: "Intro — Projets", kind: "intro" },
   { key: "page.blog", label: "Intro — Blog", kind: "intro" },
+  { key: "site.banners", label: "Bannières & fil d'Ariane", kind: "banners" },
   { key: "site.footer", label: "Pied de page (Footer)", kind: "footer" },
   { key: "site.topbar", label: "Barre supérieure (TopBar)", kind: "topbar" },
 ];
+
+const BANNER_PAGES: { slug: string; label: string }[] = [
+  { slug: "about", label: "À propos" },
+  { slug: "contact", label: "Contact" },
+  { slug: "team", label: "Équipe" },
+  { slug: "partners", label: "Partenaires" },
+  { slug: "programs", label: "Programmes" },
+  { slug: "projects", label: "Projets" },
+  { slug: "blog", label: "Blog" },
+  { slug: "donate", label: "Don" },
+];
+
 
 interface Row { id: string; key: string; value_fr: any; value_en: any }
 
