@@ -3,7 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   LayoutDashboard, FileText, FolderOpen, Users, Layers,
   BookOpen, LogOut, Menu, X, Settings, File, Handshake, MessageSquare, Home, Quote, ListOrdered,
-  Sun, Moon, Globe, Heart, Info, Phone, Globe2, Images
+  Sun, Moon, Globe, Heart, Info, Phone, Globe2, Images, Mail
 } from "lucide-react";
 import { useState } from "react";
 import logo from "@/assets/logo.jpeg";
@@ -15,6 +15,7 @@ const navItems = [
   { label: "Page d'accueil", path: "/admin/homepage", icon: Home },
   { label: "Page À propos", path: "/admin/about", icon: Info },
   { label: "Page Contact", path: "/admin/contact", icon: Phone },
+  { label: "Messages reçus", path: "/admin/messages", icon: Mail },
   { label: "Page Don", path: "/admin/donate", icon: Heart },
   { label: "Contenu du site", path: "/admin/site", icon: Globe2 },
   { label: "Menu de navigation", path: "/admin/menu", icon: ListOrdered },
