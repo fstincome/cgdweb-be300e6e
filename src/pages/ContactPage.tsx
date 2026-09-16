@@ -5,6 +5,8 @@ import PageBanner from "@/components/PageBanner";
 import { usePageSEO } from "@/hooks/usePageSEO";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { usePageBanner } from "@/hooks/usePageBanner";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const FALLBACK = { intro: "", address: "", phone: "", email: "", hours: "", map_embed: "" };
 
@@ -12,16 +14,33 @@ export default function ContactPage() {
   const banner = usePageBanner("contact");
   const { t } = useLanguage();
   const { get } = useSiteSettings();
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const [sending, setSending] = useState(false);
 
   const data = { ...FALLBACK, ...(get<typeof FALLBACK>("contact.page") || {}) };
 
   usePageSEO("contact", { title: t("contact.title"), description: data.intro || "Contactez le Centre for Green Development." });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Thank you for your message!");
-    setForm({ name: "", email: "", message: "" });
+    const name = form.name.trim();
+    const email = form.email.trim();
+    const message = form.message.trim();
+    if (!name || !email || !message) return;
+    setSending(true);
+    const { error } = await supabase.from("contact_messages").insert({
+      name: name.slice(0, 100),
+      email: email.slice(0, 255),
+      subject: form.subject.trim().slice(0, 150) || null,
+      message: message.slice(0, 1000),
+    });
+    setSending(false);
+    if (error) {
+      toast.error("Échec de l'envoi. Merci de réessayer.");
+      return;
+    }
+    toast.success("Merci ! Votre message a bien été envoyé.");
+    setForm({ name: "", email: "", subject: "", message: "" });
   };
 
   return (
