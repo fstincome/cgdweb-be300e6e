@@ -3,10 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import ImageUpload from "@/components/ImageUpload";
 import LangTabs from "@/components/admin/LangTabs";
+import GalleryEditor from "@/components/admin/GalleryEditor";
+import { toGallery } from "@/lib/gallery";
 
-interface Project { id: string; title: string; title_en: string | null; description: string | null; description_en: string | null; status: string | null; image_url: string | null; }
+interface Project { id: string; title: string; title_en: string | null; description: string | null; description_en: string | null; status: string | null; image_url: string | null; gallery?: unknown; }
 
-const empty = { title: "", title_en: "", description: "", description_en: "", status: "active", image_url: "" };
+const empty = { title: "", title_en: "", description: "", description_en: "", status: "active", image_url: "", gallery: [] as string[] };
 const inputCls = "w-full px-3 py-2 rounded-md border border-input bg-background text-foreground text-sm focus:ring-2 focus:ring-ring focus:outline-none";
 
 export default function AdminProjects() {
@@ -16,7 +18,7 @@ export default function AdminProjects() {
   const [form, setForm] = useState(empty);
 
   const load = async () => {
-    const { data } = await supabase.from("projects").select("id, title, title_en, description, description_en, status, image_url").order("created_at", { ascending: false });
+    const { data } = await supabase.from("projects").select("id, title, title_en, description, description_en, status, image_url, gallery").order("created_at", { ascending: false });
     if (data) setItems(data as Project[]);
   };
   useEffect(() => { load(); }, []);
@@ -40,6 +42,7 @@ export default function AdminProjects() {
       {showForm && (
         <div className="bg-card border border-border rounded-lg p-6 space-y-4">
           <ImageUpload value={form.image_url} onChange={(url) => setForm({ ...form, image_url: url })} folder="projects" />
+          <GalleryEditor value={form.gallery} onChange={(gallery) => setForm({ ...form, gallery })} folder="projects" />
           <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className={inputCls}>
             <option value="active">Actif</option><option value="completed">Terminé</option><option value="planned">Planifié</option>
           </select>
@@ -62,7 +65,7 @@ export default function AdminProjects() {
                 <td className="px-4 py-3 text-card-foreground font-medium">{p.title}</td>
                 <td className="px-4 py-3"><span className="px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary capitalize">{p.status}</span></td>
                 <td className="px-4 py-3 text-right space-x-1">
-                  <button onClick={() => { setEditing(p); setForm({ title: p.title, title_en: p.title_en || "", description: p.description || "", description_en: p.description_en || "", status: p.status || "active", image_url: p.image_url || "" }); setShowForm(true); }} className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-card-foreground"><Pencil className="h-4 w-4" /></button>
+                  <button onClick={() => { setEditing(p); setForm({ title: p.title, title_en: p.title_en || "", description: p.description || "", description_en: p.description_en || "", status: p.status || "active", image_url: p.image_url || "", gallery: toGallery(p.gallery) }); setShowForm(true); }} className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-card-foreground"><Pencil className="h-4 w-4" /></button>
                   <button onClick={() => handleDelete(p.id)} className="p-1.5 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
                 </td>
               </tr>
