@@ -54,7 +54,7 @@ export default function ArticlePage() {
   useEffect(() => {
     supabase
       .from("articles")
-      .select("id, title, title_en, content, content_en, meta_title, meta_title_en, meta_description, meta_description_en, image_url, publish_date, created_at, author_id, category:categories(name, name_en)")
+      .select("id, title, title_en, content, content_en, meta_title, meta_title_en, meta_description, meta_description_en, image_url, publish_date, created_at, author_id, gallery, category:categories(name, name_en)")
       .eq("slug", slug)
       .eq("published", true)
       .single()
