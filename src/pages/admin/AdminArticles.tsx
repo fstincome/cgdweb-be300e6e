@@ -5,11 +5,13 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 import RichTextEditor from "@/components/RichTextEditor";
 import ImageUpload from "@/components/ImageUpload";
 import LangTabs from "@/components/admin/LangTabs";
+import GalleryEditor from "@/components/admin/GalleryEditor";
+import { toGallery } from "@/lib/gallery";
 
 interface Article { id: string; title: string; slug: string | null; published: boolean | null; created_at: string; }
 interface Category { id: string; name: string; }
 
-const empty = { title: "", title_en: "", content: "", content_en: "", slug: "", slug_en: "", published: false, meta_title: "", meta_title_en: "", meta_description: "", meta_description_en: "", image_url: "", category_id: "" };
+const empty = { title: "", title_en: "", content: "", content_en: "", slug: "", slug_en: "", published: false, meta_title: "", meta_title_en: "", meta_description: "", meta_description_en: "", image_url: "", category_id: "", gallery: [] as string[] };
 
 const inputCls = "w-full px-3 py-2 rounded-md border border-input bg-background text-foreground text-sm focus:ring-2 focus:ring-ring focus:outline-none";
 
@@ -50,6 +52,7 @@ export default function AdminArticles() {
       meta_description: data?.meta_description || "", meta_description_en: data?.meta_description_en || "",
       image_url: data?.image_url || "",
       category_id: data?.category_id || "",
+      gallery: toGallery(data?.gallery),
     });
     setShowForm(true);
   };
@@ -107,6 +110,8 @@ export default function AdminArticles() {
               </div>
             }
           />
+
+          <GalleryEditor value={form.gallery} onChange={(gallery) => setForm({ ...form, gallery })} folder="articles" />
 
           <label className="flex items-center gap-2 text-sm text-card-foreground">
             <input type="checkbox" checked={form.published} onChange={(e) => setForm({ ...form, published: e.target.checked })} /> Publié
