@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload, X, Loader2 } from "lucide-react";
+import { Upload, X, Loader2, Images } from "lucide-react";
 import { toast } from "sonner";
+import MediaPickerDialog from "@/components/media/MediaPickerDialog";
 
 interface ImageUploadProps {
   value: string;
@@ -15,6 +16,7 @@ const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
 
 export default function ImageUpload({ value, onChange, folder = "images" }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -118,6 +120,14 @@ export default function ImageUpload({ value, onChange, folder = "images" }: Imag
           {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
           {uploading ? "Upload…" : value ? "Remplacer" : "Choisir image"}
         </button>
+        <button
+          type="button"
+          onClick={() => setPickerOpen(true)}
+          disabled={uploading}
+          className="inline-flex items-center gap-2 px-3 py-2 text-sm border border-input rounded-md bg-background text-foreground hover:bg-muted transition-colors disabled:opacity-50"
+        >
+          <Images className="h-4 w-4" /> Bibliothèque
+        </button>
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -127,6 +137,13 @@ export default function ImageUpload({ value, onChange, folder = "images" }: Imag
       </div>
       <p className="text-xs text-muted-foreground">JPG, PNG, WebP, GIF, SVG · max {MAX_SIZE_MB} Mo</p>
       <input ref={inputRef} type="file" accept={ACCEPTED_TYPES.join(",")} onChange={handleUpload} className="hidden" />
+      <MediaPickerDialog
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        selectedUrl={value}
+        folder={folder}
+        onSelect={(url) => { onChange(url); setPreview(null); }}
+      />
     </div>
   );
 }
