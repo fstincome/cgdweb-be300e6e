@@ -111,6 +111,8 @@ export default function AdminArticles() {
             }
           />
 
+          <GalleryEditor value={form.gallery} onChange={(gallery) => setForm({ ...form, gallery })} folder="articles" />
+
           <label className="flex items-center gap-2 text-sm text-card-foreground">
             <input type="checkbox" checked={form.published} onChange={(e) => setForm({ ...form, published: e.target.checked })} /> Publié
           </label>
