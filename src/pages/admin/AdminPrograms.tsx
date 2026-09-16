@@ -3,10 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import ImageUpload from "@/components/ImageUpload";
 import LangTabs from "@/components/admin/LangTabs";
+import GalleryEditor from "@/components/admin/GalleryEditor";
+import { toGallery } from "@/lib/gallery";
 
-interface Program { id: string; title: string; title_en: string | null; description: string | null; description_en: string | null; image_url: string | null; }
+interface Program { id: string; title: string; title_en: string | null; description: string | null; description_en: string | null; image_url: string | null; gallery?: unknown; }
 
-const empty = { title: "", title_en: "", description: "", description_en: "", image_url: "" };
+const empty = { title: "", title_en: "", description: "", description_en: "", image_url: "", gallery: [] as string[] };
 const inputCls = "w-full px-3 py-2 rounded-md border border-input bg-background text-foreground text-sm focus:ring-2 focus:ring-ring focus:outline-none";
 
 export default function AdminPrograms() {
@@ -40,6 +42,7 @@ export default function AdminPrograms() {
       {showForm && (
         <div className="bg-card border border-border rounded-lg p-6 space-y-4">
           <ImageUpload value={form.image_url} onChange={(url) => setForm({ ...form, image_url: url })} folder="programs" />
+          <GalleryEditor value={form.gallery} onChange={(gallery) => setForm({ ...form, gallery })} folder="programs" />
           <LangTabs
             fr={<div className="space-y-3"><input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Titre" className={inputCls} /><textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Description" rows={4} className={inputCls + " resize-none"} /></div>}
             en={<div className="space-y-3"><input value={form.title_en} onChange={(e) => setForm({ ...form, title_en: e.target.value })} placeholder="Title" className={inputCls} /><textarea value={form.description_en} onChange={(e) => setForm({ ...form, description_en: e.target.value })} placeholder="Description" rows={4} className={inputCls + " resize-none"} /></div>}
@@ -66,7 +69,7 @@ export default function AdminPrograms() {
                 <td className="px-4 py-3 text-card-foreground font-medium">{p.title}</td>
                 <td className="px-4 py-3 text-muted-foreground truncate max-w-xs">{p.description || "—"}</td>
                 <td className="px-4 py-3 text-right space-x-1">
-                  <button onClick={() => { setEditing(p); setForm({ title: p.title, title_en: p.title_en || "", description: p.description || "", description_en: p.description_en || "", image_url: p.image_url || "" }); setShowForm(true); }} className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-card-foreground"><Pencil className="h-4 w-4" /></button>
+                  <button onClick={() => { setEditing(p); setForm({ title: p.title, title_en: p.title_en || "", description: p.description || "", description_en: p.description_en || "", image_url: p.image_url || "", gallery: toGallery(p.gallery) }); setShowForm(true); }} className="p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-card-foreground"><Pencil className="h-4 w-4" /></button>
                   <button onClick={() => handleDelete(p.id)} className="p-1.5 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
                 </td>
               </tr>

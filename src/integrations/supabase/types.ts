@@ -377,6 +377,7 @@ export type Database = {
           created_at: string
           description: string | null
           description_en: string | null
+          gallery: Json
           id: string
           image_url: string | null
           title: string
@@ -387,6 +388,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           description_en?: string | null
+          gallery?: Json
           id?: string
           image_url?: string | null
           title: string
@@ -397,6 +399,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           description_en?: string | null
+          gallery?: Json
           id?: string
           image_url?: string | null
           title?: string
@@ -410,6 +413,7 @@ export type Database = {
           created_at: string
           description: string | null
           description_en: string | null
+          gallery: Json
           id: string
           image_url: string | null
           program_id: string | null
@@ -422,6 +426,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           description_en?: string | null
+          gallery?: Json
           id?: string
           image_url?: string | null
           program_id?: string | null
@@ -434,6 +439,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           description_en?: string | null
+          gallery?: Json
           id?: string
           image_url?: string | null
           program_id?: string | null
