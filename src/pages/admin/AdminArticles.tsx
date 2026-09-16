@@ -52,6 +52,7 @@ export default function AdminArticles() {
       meta_description: data?.meta_description || "", meta_description_en: data?.meta_description_en || "",
       image_url: data?.image_url || "",
       category_id: data?.category_id || "",
+      gallery: toGallery(data?.gallery),
     });
     setShowForm(true);
   };
