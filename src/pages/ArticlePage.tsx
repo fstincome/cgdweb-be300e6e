@@ -121,6 +121,7 @@ export default function ArticlePage() {
           className="prose prose-sm max-w-none text-foreground font-serif leading-relaxed"
           dangerouslySetInnerHTML={{ __html: content || "" }}
         />
+        <ImageGallery images={toGallery(article.gallery)} title={lang === "en" ? "Gallery" : "Galerie"} />
         <CommentSection contentType="article" contentId={article.id} />
       </div>
     </div>
