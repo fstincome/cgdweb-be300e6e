@@ -40,6 +40,7 @@ import AdminDonate from "@/pages/admin/AdminDonate";
 import AdminAbout from "@/pages/admin/AdminAbout";
 import AdminContact from "@/pages/admin/AdminContact";
 import AdminSiteContent from "@/pages/admin/AdminSiteContent";
+import AdminMedia from "@/pages/admin/AdminMedia";
 import CategoryPage from "@/pages/CategoryPage";
 import NotFound from "@/pages/NotFound";
 
@@ -95,6 +96,7 @@ const App = () => (
                   <Route path="users" element={<AdminUsers />} />
                   <Route path="pages" element={<AdminPages />} />
                   <Route path="partners" element={<AdminPartners />} />
+                  <Route path="media" element={<AdminMedia />} />
                 </Route>
 
                 <Route path="*" element={<NotFound />} />
