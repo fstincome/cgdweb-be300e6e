@@ -24,6 +24,7 @@ interface Article {
   publish_date: string | null;
   created_at: string;
   author_id: string | null;
+  gallery?: unknown;
   category: { name: string; name_en: string | null } | null;
 }
 
