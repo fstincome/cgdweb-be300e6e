@@ -7,6 +7,8 @@ import CommentSection from "@/components/CommentSection";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSEO } from "@/hooks/useSEO";
 import { tField } from "@/lib/i18nField";
+import ImageGallery from "@/components/ImageGallery";
+import { toGallery } from "@/lib/gallery";
 
 interface Article {
   id: string;
