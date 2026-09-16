@@ -43,6 +43,7 @@ import AdminSiteContent from "@/pages/admin/AdminSiteContent";
 import AdminMedia from "@/pages/admin/AdminMedia";
 import AdminMessages from "@/pages/admin/AdminMessages";
 import CategoryPage from "@/pages/CategoryPage";
+import AdminNotFound from "@/pages/admin/AdminNotFound";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -99,6 +100,8 @@ const App = () => (
                   <Route path="partners" element={<AdminPartners />} />
                   <Route path="media" element={<AdminMedia />} />
                   <Route path="messages" element={<AdminMessages />} />
+                  <Route path="donation" element={<AdminDonate />} />
+                  <Route path="*" element={<AdminNotFound />} />
                 </Route>
 
                 <Route path="*" element={<NotFound />} />
