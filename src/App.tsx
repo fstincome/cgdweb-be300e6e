@@ -42,6 +42,7 @@ import AdminContact from "@/pages/admin/AdminContact";
 import AdminSiteContent from "@/pages/admin/AdminSiteContent";
 import AdminMedia from "@/pages/admin/AdminMedia";
 import AdminMessages from "@/pages/admin/AdminMessages";
+import AdminBreadcrumb from "@/pages/admin/AdminBreadcrumb";
 import CategoryPage from "@/pages/CategoryPage";
 import AdminNotFound from "@/pages/admin/AdminNotFound";
 import NotFound from "@/pages/NotFound";
@@ -87,6 +88,7 @@ const App = () => (
                   <Route path="about" element={<AdminAbout />} />
                   <Route path="contact" element={<AdminContact />} />
                   <Route path="site" element={<AdminSiteContent />} />
+                  <Route path="breadcrumb" element={<AdminBreadcrumb />} />
                   <Route path="menu" element={<AdminMenu />} />
                   <Route path="testimonials" element={<AdminTestimonials />} />
                   <Route path="articles" element={<AdminArticles />} />

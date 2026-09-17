@@ -37,7 +37,7 @@ export default function DonatePage() {
 
   return (
     <div>
-      <PageBanner title={t("donate.title")} imageUrl={banner.image} breadcrumbs={[{ label: t("nav.home"), to: "/" }, { label: banner.label || t("donate.title") }]} />
+      <PageBanner title={t("donate.title")} imageUrl={banner.image} breadcrumbs={[{ label: banner.label || t("donate.title") }]} />
 
       <section className="py-16">
         <div className="container max-w-5xl space-y-12">

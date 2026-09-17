@@ -5,6 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import PageBanner from "@/components/PageBanner";
 import { ArrowRight, User } from "lucide-react";
 import { tField } from "@/lib/i18nField";
+import { usePageBanner } from "@/hooks/usePageBanner";
 
 const TEST_IMG = "https://lh3.googleusercontent.com/d/1RAhUuswgBLe02nOp-YeEPgIrjvL7cGvQ";
 
@@ -20,6 +21,7 @@ interface Article {
 
 export default function CategoryPage() {
   const { slug } = useParams();
+  const banner = usePageBanner("category");
   const { t, lang } = useLanguage();
   const [articles, setArticles] = useState<Article[]>([]);
   const [categoryName, setCategoryName] = useState("");
@@ -54,7 +56,7 @@ export default function CategoryPage() {
 
   return (
     <div>
-      <PageBanner title={categoryName || (lang === "en" ? "Category" : "Catégorie")} breadcrumbs={[{ label: t("nav.blog"), to: "/blog" }, { label: categoryName }]} />
+      <PageBanner title={categoryName || (lang === "en" ? "Category" : "Catégorie")} imageUrl={banner.image} breadcrumbs={[{ label: t("nav.blog"), to: "/blog" }, { label: categoryName }]} />
       <section className="py-16">
         <div className="container">
           {articles.length === 0 ? (
