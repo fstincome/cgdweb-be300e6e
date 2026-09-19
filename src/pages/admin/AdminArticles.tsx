@@ -7,6 +7,7 @@ import ImageUpload from "@/components/ImageUpload";
 import LangTabs from "@/components/admin/LangTabs";
 import GalleryEditor from "@/components/admin/GalleryEditor";
 import { toGallery } from "@/lib/gallery";
+import { toast } from "@/hooks/use-toast";
 
 interface Article { id: string; title: string; slug: string | null; published: boolean | null; created_at: string; }
 interface Category { id: string; name: string; }
@@ -33,10 +34,45 @@ export default function AdminArticles() {
     supabase.from("categories").select("id, name").order("name").then(({ data }) => { if (data) setCategories(data); });
   }, []);
 
+  const [saving, setSaving] = useState(false);
+
+  const slugify = (s: string) =>
+    s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
+
   const handleSave = async () => {
-    const payload = { ...form, category_id: form.category_id || null };
-    if (editing) await supabase.from("articles").update(payload).eq("id", editing.id);
-    else await supabase.from("articles").insert({ ...payload, author_id: user?.id });
+    if (!form.title.trim()) { toast({ title: "Titre requis", description: "Veuillez saisir un titre.", variant: "destructive" }); return; }
+    setSaving(true);
+    const base = form.slug.trim() ? slugify(form.slug) : slugify(form.title);
+    let slug = base || `article-${Date.now()}`;
+
+    // Garantir l'unicité du slug
+    const { data: existing } = await supabase.from("articles").select("id, slug").like("slug", `${slug}%`);
+    const taken = (existing || []).filter((a) => a.id !== editing?.id).map((a) => a.slug);
+    if (taken.includes(slug)) {
+      let i = 2;
+      while (taken.includes(`${slug}-${i}`)) i++;
+      slug = `${slug}-${i}`;
+    }
+
+    const payload = {
+      ...form,
+      slug,
+      slug_en: form.slug_en.trim() ? slugify(form.slug_en) : null,
+      category_id: form.category_id || null,
+      publish_date: form.published ? new Date().toISOString() : null,
+    };
+
+    const { error } = editing
+      ? await supabase.from("articles").update(payload).eq("id", editing.id)
+      : await supabase.from("articles").insert({ ...payload, author_id: user?.id });
+
+    setSaving(false);
+    if (error) {
+      toast({ title: "Échec de l'enregistrement", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: form.published ? "Article publié" : "Brouillon enregistré" });
     setShowForm(false); setEditing(null); setForm(empty); fetchArticles();
   };
 
@@ -117,7 +153,7 @@ export default function AdminArticles() {
             <input type="checkbox" checked={form.published} onChange={(e) => setForm({ ...form, published: e.target.checked })} /> Publié
           </label>
           <div className="flex gap-2">
-            <button onClick={handleSave} className="px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:opacity-90">Enregistrer</button>
+            <button onClick={handleSave} disabled={saving} className="px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:opacity-90 disabled:opacity-50">{saving ? "Enregistrement…" : "Enregistrer"}</button>
             <button onClick={() => { setShowForm(false); setEditing(null); }} className="px-4 py-2 border border-border text-muted-foreground text-sm rounded-md hover:bg-muted">Annuler</button>
           </div>
         </div>
