@@ -7,6 +7,7 @@ import ImageUpload from "@/components/ImageUpload";
 import LangTabs from "@/components/admin/LangTabs";
 import GalleryEditor from "@/components/admin/GalleryEditor";
 import { toGallery } from "@/lib/gallery";
+import { toast } from "@/hooks/use-toast";
 
 interface Article { id: string; title: string; slug: string | null; published: boolean | null; created_at: string; }
 interface Category { id: string; name: string; }
